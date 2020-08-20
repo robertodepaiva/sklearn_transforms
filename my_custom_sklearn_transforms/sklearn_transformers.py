@@ -33,9 +33,9 @@ class AjusteDesafio2(BaseEstimator, TransformerMixin):
             fill_value=6.6,  # a constante que será usada para preenchimento dos valores faltantes é um int64=0.
             verbose=0,
             copy=True
-        )        # Aplicamos o SimpleImputer ``si`` ao conjunto de dados df_data_2 (resultado da primeira transformação)
+        )
         si.fit(X=inputdata)
-        # Reconstrução de um novo DataFrame Pandas com o conjunto imputado (df_data_3)
+
         df_data_3 = pandas.DataFrame.from_records(
             data=si.transform(
                 X=inputdata
@@ -57,7 +57,7 @@ class AjusteDesafio2(BaseEstimator, TransformerMixin):
                 X=df_data_3
             ),
         )
-        df_data_4['INGLES'] = df_data_2['INGLES']
+        df_data_4['INGLES'] = inputdata['INGLES']
         # Criação de um objeto SimpleImputer
         si = SimpleImputer(
             missing_values=numpy.nan,  # os valores faltantes são do tipo ``numpy.nan`` (padrão Pandas)
@@ -87,7 +87,6 @@ class AjusteDesafio2(BaseEstimator, TransformerMixin):
             verbose=0,
             copy=True
         )
-        # Aplicamos o SimpleImputer ``si`` ao conjunto de dados df_data_2 (resultado da primeira transformação)
         si.fit(X=df_data_5)
         df_data_6 = pandas.DataFrame.from_records(
             data=si.transform(
