@@ -115,7 +115,7 @@ class AjusteDesafio2(BaseEstimator, TransformerMixin):
             df_data_6.at[index, 'MENOR_H'] = min(df_data_6.at[index, 'NOTA_EM'], df_data_6.at[index, 'NOTA_DE']);
 
             #calculo dos outliers diferenciando os motivos
-            if (df_data_6.at[index, 'PERFIL'] == 'HUMANAS' and (df_data_6.at[index, 'MENOR_H'] > 8 or df_data_6.at[index, 'MENOR_E'] < 6)) :
+            '''if (df_data_6.at[index, 'PERFIL'] == 'HUMANAS' and (df_data_6.at[index, 'MENOR_H'] > 8 or df_data_6.at[index, 'MENOR_E'] < 6)) :
                 df_data_6.at[index, 'BAD'] = 1;
             elif (df_data_6.at[index, 'PERFIL'] == 'EXATAS' and (df_data_6.at[index, 'MENOR_E'] > 7 or df_data_6.at[index, 'MENOR_H'] < 6)) :
                 df_data_6.at[index, 'BAD'] = 2;
@@ -125,6 +125,18 @@ class AjusteDesafio2(BaseEstimator, TransformerMixin):
                 df_data_6.at[index, 'BAD'] = 4;
             elif (df_data_6.at[index, 'PERFIL'] == 'MUITO_BOM' and (df_data_6.at[index, 'MENOR_E'] < 6 and df_data_6.at[index, 'MENOR_H'] < 6)) :
                 df_data_6.at[index, 'BAD'] = 5;
+            else:
+                df_data_6.at[index, 'BAD'] = 0;'''
+            if ((df_data_6.at[index, 'MENOR_H'] > 8 or df_data_6.at[index, 'MENOR_E'] < 6)) :
+                df_data_6.at[index, 'BAD'] = 1;#EXATAS
+            elif ((df_data_6.at[index, 'MENOR_E'] > 6.6 or df_data_6.at[index, 'MENOR_H'] < 6)) :
+                df_data_6.at[index, 'BAD'] = 2;#HUMANAS
+            elif ((df_data_6.at[index, 'MENOR_E'] < 6.6 and df_data_6.at[index, 'MENOR_H'] < 6.6)) :
+                df_data_6.at[index, 'BAD'] = 3;#DIFICULDADE
+            elif ((df_data_6.at[index, 'MENOR_E'] < 8 and df_data_6.at[index, 'MENOR_H'] < 8)) :
+                df_data_6.at[index, 'BAD'] = 4;#MUITO_BOM
+            elif ((df_data_6.at[index, 'MENOR_E'] > 8 and df_data_6.at[index, 'MENOR_H'] > 8)) :
+                df_data_6.at[index, 'BAD'] = 5;#EXCELENTE
             else:
                 df_data_6.at[index, 'BAD'] = 0;
 
