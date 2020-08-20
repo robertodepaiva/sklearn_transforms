@@ -19,8 +19,12 @@ class DropColumns(BaseEstimator, TransformerMixin):
 
 
 class AjusteDesafio2(BaseEstimator, TransformerMixin):
-    def __init__(self, columns):
-        self.columns = columns
+    def __init__(self, min_excelente, min_muitobom, min_exatas, min_humanas):
+        self.MIN_EXCELENTE = min_excelente
+        self.MIN_MUITO_BOM = min_muitobom
+        self.MIN_EXATAS = min_exatas
+        self.MIN_HUMANAS = min_humanas
+        self.MAX_NOTA = 10.0
 
     def fit(self, X, y=None):
         return self
@@ -76,14 +80,14 @@ class AjusteDesafio2(BaseEstimator, TransformerMixin):
         )
 
         #ajuste dos valores de notas acima de 10.0
-        df_data_5['NOTA_DE'] = df_data_4[df_data_4['NOTA_DE'] < 10.0]['NOTA_DE'].copy()
-        df_data_5['NOTA_EM'] = df_data_4[df_data_4['NOTA_EM'] < 10.0]['NOTA_EM'].copy()
-        df_data_5['NOTA_MF'] = df_data_4[df_data_4['NOTA_MF'] < 10.0]['NOTA_MF'].copy()
-        df_data_5['NOTA_GO'] = df_data_4[df_data_4['NOTA_GO'] < 10.0]['NOTA_GO'].copy()
+        df_data_5['NOTA_DE'] = df_data_4[df_data_4['NOTA_DE'] < self.MAX_NOTA]['NOTA_DE'].copy()
+        df_data_5['NOTA_EM'] = df_data_4[df_data_4['NOTA_EM'] < self.MAX_NOTA]['NOTA_EM'].copy()
+        df_data_5['NOTA_MF'] = df_data_4[df_data_4['NOTA_MF'] < self.MAX_NOTA]['NOTA_MF'].copy()
+        df_data_5['NOTA_GO'] = df_data_4[df_data_4['NOTA_GO'] < self.MAX_NOTA]['NOTA_GO'].copy()
         si = SimpleImputer(
             missing_values=numpy.nan,  # os valores faltantes são do tipo ``numpy.nan`` (padrão Pandas)
             strategy='constant',  # a estratégia escolhida é a alteração do valor faltante por uma constante
-            fill_value=10.0,  # a constante que será usada para preenchimento dos valores faltantes é um int64=0.
+            fill_value=self.MAX_NOTA,  # a constante que será usada para preenchimento dos valores faltantes é um int64=0.
             verbose=0,
             copy=True
         )
@@ -102,40 +106,28 @@ class AjusteDesafio2(BaseEstimator, TransformerMixin):
         for index, row in df_data_6.iterrows():
             #alunos com reprovacao necessitam mentoria, entao a nota nao eh zero (diferenciar)
             if row.REPROVACOES_DE > 0.0 :
-                df_data_6.at[index, 'NOTA_DE'] = -10.0;
+                df_data_6.at[index, 'NOTA_DE'] = 0.0 - self.MAX_NOTA;
             if row.REPROVACOES_EM > 0.0 :
-                df_data_6.at[index, 'NOTA_EM'] = -10.0;
+                df_data_6.at[index, 'NOTA_EM'] = 0.0 - self.MAX_NOTA;
             if row.REPROVACOES_MF > 0.0 :
-                df_data_6.at[index, 'NOTA_MF'] = -10.0;
+                df_data_6.at[index, 'NOTA_MF'] = 0.0 - self.MAX_NOTA;
             if row.REPROVACOES_GO > 0.0 :
-                df_data_6.at[index, 'NOTA_GO'] = -10.0;
+                df_data_6.at[index, 'NOTA_GO'] = 0.0 - self.MAX_NOTA;
 
             #calculo das menores notas
             df_data_6.at[index, 'MENOR_E'] = min(df_data_6.at[index, 'NOTA_MF'], df_data_6.at[index, 'NOTA_GO']);
             df_data_6.at[index, 'MENOR_H'] = min(df_data_6.at[index, 'NOTA_EM'], df_data_6.at[index, 'NOTA_DE']);
 
-            #calculo dos outliers diferenciando os motivos
-            '''if (df_data_6.at[index, 'PERFIL'] == 'HUMANAS' and (df_data_6.at[index, 'MENOR_H'] > 8 or df_data_6.at[index, 'MENOR_E'] < 6)) :
-                df_data_6.at[index, 'BAD'] = 1;
-            elif (df_data_6.at[index, 'PERFIL'] == 'EXATAS' and (df_data_6.at[index, 'MENOR_E'] > 7 or df_data_6.at[index, 'MENOR_H'] < 6)) :
-                df_data_6.at[index, 'BAD'] = 2;
-            elif (df_data_6.at[index, 'PERFIL'] == 'DIFICULDADE' and (df_data_6.at[index, 'MENOR_E'] > 6.6 or df_data_6.at[index, 'MENOR_H'] > 6.6)) :
-                df_data_6.at[index, 'BAD'] = 3;
-            elif (df_data_6.at[index, 'PERFIL'] == 'EXCELENTE' and (df_data_6.at[index, 'MENOR_E'] < 8 and df_data_6.at[index, 'MENOR_H'] < 8)) :
-                df_data_6.at[index, 'BAD'] = 4;
-            elif (df_data_6.at[index, 'PERFIL'] == 'MUITO_BOM' and (df_data_6.at[index, 'MENOR_E'] < 6 and df_data_6.at[index, 'MENOR_H'] < 6)) :
-                df_data_6.at[index, 'BAD'] = 5;
-            else:
-                df_data_6.at[index, 'BAD'] = 0;'''
-            if ((df_data_6.at[index, 'MENOR_H'] > 8 or df_data_6.at[index, 'MENOR_E'] < 6)) :
+            #calculo das avaliacoes de notas
+            if ((df_data_6.at[index, 'MENOR_H'] > self.MIN_HUMANAS and df_data_6.at[index, 'MENOR_E'] < self.MIN_EXATAS)) :
                 df_data_6.at[index, 'BAD'] = 1;#EXATAS
-            elif ((df_data_6.at[index, 'MENOR_E'] > 6.6 or df_data_6.at[index, 'MENOR_H'] < 6)) :
+            elif ((df_data_6.at[index, 'MENOR_E'] > self.MIN_EXATAS and df_data_6.at[index, 'MENOR_H'] < self.MIN_HUMANAS)) :
                 df_data_6.at[index, 'BAD'] = 2;#HUMANAS
-            elif ((df_data_6.at[index, 'MENOR_E'] < 6.6 and df_data_6.at[index, 'MENOR_H'] < 6.6)) :
+            elif ((df_data_6.at[index, 'MENOR_E'] < self.MIN_EXATAS and df_data_6.at[index, 'MENOR_H'] < self.MIN_HUMANAS)) :
                 df_data_6.at[index, 'BAD'] = 3;#DIFICULDADE
-            elif ((df_data_6.at[index, 'MENOR_E'] < 8 and df_data_6.at[index, 'MENOR_H'] < 8)) :
+            elif ((df_data_6.at[index, 'MENOR_E'] < self.MIN_EXCELENTE or df_data_6.at[index, 'MENOR_H'] < self.MIN_EXCELENTE)) :
                 df_data_6.at[index, 'BAD'] = 4;#MUITO_BOM
-            elif ((df_data_6.at[index, 'MENOR_E'] > 8 and df_data_6.at[index, 'MENOR_H'] > 8)) :
+            elif ((df_data_6.at[index, 'MENOR_E'] > self.MIN_EXCELENTE and df_data_6.at[index, 'MENOR_H'] > self.MIN_EXCELENTE)) :
                 df_data_6.at[index, 'BAD'] = 5;#EXCELENTE
             else:
                 df_data_6.at[index, 'BAD'] = 0;
