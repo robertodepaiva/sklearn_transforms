@@ -115,15 +115,15 @@ class AjusteDesafio2(BaseEstimator, TransformerMixin):
             df_data_6.at[index, 'MENOR_H'] = min(df_data_6.at[index, 'NOTA_EM'], df_data_6.at[index, 'NOTA_DE']);
 
             #calculo dos outliers diferenciando os motivos
-            if (row.PERFIL == 'HUMANAS' and (df_data_6.at[index, 'MENOR_H'] > 8 or df_data_6.at[index, 'MENOR_E'] < 6)) :
+            if (df_data_6.at[index, 'PERFIL'] == 'HUMANAS' and (df_data_6.at[index, 'MENOR_H'] > 8 or df_data_6.at[index, 'MENOR_E'] < 6)) :
                 df_data_6.at[index, 'BAD'] = 1;
-            elif (row.PERFIL == 'EXATAS' and (df_data_6.at[index, 'MENOR_E'] > 7 or df_data_6.at[index, 'MENOR_H'] < 6)) :
+            elif (df_data_6.at[index, 'PERFIL'] == 'EXATAS' and (df_data_6.at[index, 'MENOR_E'] > 7 or df_data_6.at[index, 'MENOR_H'] < 6)) :
                 df_data_6.at[index, 'BAD'] = 2;
-            elif (row.PERFIL == 'DIFICULDADE' and (df_data_6.at[index, 'MENOR_E'] > 6.6 or df_data_6.at[index, 'MENOR_H'] > 6.6)) :
+            elif (df_data_6.at[index, 'PERFIL'] == 'DIFICULDADE' and (df_data_6.at[index, 'MENOR_E'] > 6.6 or df_data_6.at[index, 'MENOR_H'] > 6.6)) :
                 df_data_6.at[index, 'BAD'] = 3;
-            elif (row.PERFIL == 'EXCELENTE' and (df_data_6.at[index, 'MENOR_E'] < 8 and df_data_6.at[index, 'MENOR_H'] < 8)) :
+            elif (df_data_6.at[index, 'PERFIL'] == 'EXCELENTE' and (df_data_6.at[index, 'MENOR_E'] < 8 and df_data_6.at[index, 'MENOR_H'] < 8)) :
                 df_data_6.at[index, 'BAD'] = 4;
-            elif (row.PERFIL == 'MUITO_BOM' and (df_data_6.at[index, 'MENOR_E'] < 6 and df_data_6.at[index, 'MENOR_H'] < 6)) :
+            elif (df_data_6.at[index, 'PERFIL'] == 'MUITO_BOM' and (df_data_6.at[index, 'MENOR_E'] < 6 and df_data_6.at[index, 'MENOR_H'] < 6)) :
                 df_data_6.at[index, 'BAD'] = 5;
             else:
                 df_data_6.at[index, 'BAD'] = 0;
