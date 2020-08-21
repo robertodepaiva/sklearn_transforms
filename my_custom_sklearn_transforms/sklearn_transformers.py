@@ -45,11 +45,11 @@ class AjusteDesafio2(BaseEstimator, TransformerMixin):
 
     #def transform(self, inputdata):
     def calcula(self, inputdata, results=None, dofit=False):
-        print("fit inputdata.columns = ")
-        print(inputdata.columns)
-        if not results is None:
-            print("fit results exist = ")
-            print(results[1])
+        #print("fit inputdata.columns = ")
+        #print(inputdata.columns)
+        #if not results is None:
+            #print("fit results exist = ")
+            #print(results[1])
         #altera valores nulos para 6.6 nas notas
         si = SimpleImputer(
             missing_values=numpy.nan,  # os valores faltantes são do tipo ``numpy.nan`` (padrão Pandas)
