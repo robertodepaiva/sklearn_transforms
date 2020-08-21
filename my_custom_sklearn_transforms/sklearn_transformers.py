@@ -26,10 +26,10 @@ class AjusteDesafio2(BaseEstimator, TransformerMixin):
         self.MIN_HUMANAS = min_humanas
         self.MAX_NOTA = 10.0
 
-    def fit(self, X, y=None):
-        return self
+    #def fit(self, inputdata, results=None):
+    #    return self
 
-    def transform(self, inputdata):
+    def fit_transform(self, inputdata):
         #altera valores nulos para 6.6 nas notas
         si = SimpleImputer(
             missing_values=numpy.nan,  # os valores faltantes são do tipo ``numpy.nan`` (padrão Pandas)
@@ -117,7 +117,7 @@ class AjusteDesafio2(BaseEstimator, TransformerMixin):
             #calculo das menores notas
             df_data_6.at[index, 'MENOR_E'] = min(df_data_6.at[index, 'NOTA_MF'], df_data_6.at[index, 'NOTA_GO']);
             df_data_6.at[index, 'MENOR_H'] = min(df_data_6.at[index, 'NOTA_EM'], df_data_6.at[index, 'NOTA_DE']);
-
+            '''
             #calculo das avaliacoes de notas
             if ((df_data_6.at[index, 'MENOR_H'] > self.MIN_HUMANAS and df_data_6.at[index, 'MENOR_E'] < self.MIN_EXATAS)) :
                 df_data_6.at[index, 'BAD'] = 1;#EXATAS
@@ -129,6 +129,19 @@ class AjusteDesafio2(BaseEstimator, TransformerMixin):
                 df_data_6.at[index, 'BAD'] = 4;#MUITO_BOM
             elif ((df_data_6.at[index, 'MENOR_E'] > self.MIN_EXCELENTE and df_data_6.at[index, 'MENOR_H'] > self.MIN_EXCELENTE)) :
                 df_data_6.at[index, 'BAD'] = 5;#EXCELENTE
+            else:
+                df_data_6.at[index, 'BAD'] = 0;
+            '''
+            if (df_data_6.at[index, 'PERFIL'] == 'HUMANAS' and (df_data_6.at[index, 'MENOR_E'] < self.MIN_EXATAS or df_data_6.at[index, 'MENOR_H'] > self.MIN_HUMANAS)) :
+                df_data_6.at[index, 'BAD'] = 1;
+            elif (df_data_6.at[index, 'PERFIL'] == 'EXATAS' and (df_data_6.at[index, 'MENOR_E'] > self.MIN_EXATAS or df_data_6.at[index, 'MENOR_H'] < self.MIN_HUMANAS)) :
+                df_data_6.at[index, 'BAD'] = 2;
+            elif (df_data_6.at[index, 'PERFIL'] == 'DIFICULDADE' and (df_data_6.at[index, 'MENOR_E'] > self.MIN_EXATAS or df_data_6.at[index, 'MENOR_H'] > self.MIN_HUMANAS)) :
+                df_data_6.at[index, 'BAD'] = 3;
+            elif (df_data_6.at[index, 'PERFIL'] == 'EXCELENTE' and (df_data_6.at[index, 'MENOR_E'] < self.MIN_EXCELENTE and df_data_6.at[index, 'MENOR_H'] < self.MIN_EXCELENTE)) :
+                df_data_6.at[index, 'BAD'] = 4;
+            elif (df_data_6.at[index, 'PERFIL'] == 'MUITO_BOM' and (df_data_6.at[index, 'MENOR_E'] < self.MIN_EXATAS and df_data_6.at[index, 'MENOR_H'] < self.MIN_HUMANAS)) :
+                df_data_6.at[index, 'BAD'] = 5;
             else:
                 df_data_6.at[index, 'BAD'] = 0;
 
