@@ -26,8 +26,11 @@ class AjusteDesafio2(BaseEstimator, TransformerMixin):
         self.MIN_HUMANAS = min_humanas
         self.MAX_NOTA = 10.0
 
-    #def fit(self, inputdata, results=None):
-    #    return self
+    def fit(self, inputdata, results=None):
+        return self
+
+    def transform(self, inputdata):
+        return inputdata
 
     def fit_transform(self, inputdata):
         #altera valores nulos para 6.6 nas notas
