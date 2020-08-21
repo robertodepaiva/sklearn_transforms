@@ -30,7 +30,7 @@ class AjusteDesafio2(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, inputdata):
-        return inputdata
+        return self
 
     def fit_transform(self, inputdata):
         #altera valores nulos para 6.6 nas notas
